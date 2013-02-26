@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}{{ siteTitle }}{% endblock %}
+
+{% block content %}
+    {% for article in articles %}
+        <article>
+            <h3><a href='{{ baseUrl }}/{{ article.slug }}'>{{ article.title }}</a></h3>
+            <h6>Written by <a href="#">{{ article.author }}</a> on {{ article.timestamp|date('jS F Y') }}.</h6>
+
+            <p>{{ article.content|raw }}</p>
+        </article>
+        <hr />
+    {% else %}
+        <p>There are currently no articles.</p>
+    {% endfor %}
+{% endblock %}

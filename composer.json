@@ -1,0 +1,9 @@
+{
+    "require": {
+        "benthedesigner/dropbox": "dev-master",
+        "slim/slim": "2.*",
+        "slim/extras": "dev-master",
+        "dflydev/markdown": "1.0.*@dev",
+        "twig/twig": "1.12.*@dev"
+    }
+}

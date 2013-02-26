@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block page_title %}{{ data.title }}{% endblock %}
+{% block content %}
+<h1>Admin Area</h1>
+
+{% if user %}
+    <p>logged in as {{ user }} <a href="{{ baseUrl }}/logout">Logout</a></p>
+{% endif %}
+
+<p>
+<form><button type="submit" formmethod="post" formaction="{{ baseUrl }}/getdbmeta">
+        Sync with Dropbox Posts</button>
+</form>
+</p>
+{% if data.synced %}
+{{ data.num }} articles were synced
+{% endif %}
+<p>
+
+</p>
+<p><a href="/Dropblog">Back to Homepage</a>
+
+</p>
+{% endblock %}
