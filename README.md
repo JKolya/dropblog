@@ -27,4 +27,3 @@ Files should start with the post info two spaces and then the content
     Tags: comma separated
     
     #post content
-
