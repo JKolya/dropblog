@@ -19,9 +19,16 @@ function getMetaData($data) {
         } elseif (strtolower($meta[0]) == 'author') {
             //set article author
             $metaData['author'] = trim($meta[1]);
+        } elseif (strtolower($meta[0]) == 'tags') {
+            $metaData['tags']  = explode(",", $meta[1]);
+            array_walk($metaData['tags'], '_trim');
         }
     }
     return $metaData;
+}
+
+function _trim(&$item) {
+    $item = trim($item);
 }
 
 /*
@@ -99,6 +106,7 @@ function updatePost($dropbox, $contents, $collection, $markdownParser) {
     $post['slug' ]= create_slug($postContent['meta']['title']);
     $post['content'] = $markdownParser->transformMarkdown($postContent['content']);
     $post['path'] = $contents->path;
+    $post['tags'] = $postContent['meta']['tags'];
     $post['modified'] = $contents->modified;
 
     $collection->save($post);
@@ -118,6 +126,10 @@ function searchJSON($json, $tag) {
     }
     return false;
 }
+
+/*
+ * convert an object to an array
+ */
 
 function objectToArray( $object ) {
     if( !is_object( $object ) && !is_array( $object ) ) {
@@ -187,7 +199,9 @@ function getDropboxMeta($dropbox) {
     return $metaData;
 }
 
-
+/*
+ * connect to Mongo db
+ */
 function connectDB() {
     //For AppFog's Mongo service
     $services_json = json_decode(getenv("VCAP_SERVICES"),true);
@@ -199,13 +213,13 @@ function connectDB() {
     $db = $mongo_config["db"];
     $name = $mongo_config["name"];
     
-    //$connect = "mongodb://localhost/test";
-    $connect = "mongodb://$username:$password@$hostname:$port/$db";
+    $connect = "mongodb://localhost/test";
+    //$connect = "mongodb://$username:$password@$hostname:$port/$db";
     
     try{
         $m = new Mongo( $connect );
-        //$db = $m->test;
-        $db = $m->selectDB($db);
+        $db = $m->test;
+        //$db = $m->selectDB($db);
         return $db;
     } 
     catch (MongoConnectionException $e) 
@@ -219,15 +233,52 @@ function connectDB() {
     
 }
 
+/*
+ * get number of pages to paginate
+ */
+
+function getPages($page, $total, $per_page) {
+
+    $calc = $per_page * $page;
+    $total_page = ceil( $total / $per_page ); 
+    $pages['start'] = $calc - $per_page;
+    
+    if ($page > 1) {
+        $pages['next'] = $page - 1;
+    }
+    
+    if ($page < $total_page) {
+        $pages['previous'] = $page + 1;
+    }
+    return $pages;
+}
+
 //main blog page
 $app->get('/', function () use ($app) {
     $db = connectDB();
     $collection = $db->posts;
     $articles = $collection->find();
+    $total = $articles->count();
+    $pages = getPages(1, $total, $app->config('article.limit'));
+    $articles->sort(array('timestamp' => -1));
+    $articles->limit($app->config('article.limit'));
+    
+    $app->render('main.html', array('articles' => $articles, 'pages' => $pages));
+})->name('/');
+
+$app->get('/page/:page', function ($page) use ($app) {
+    $db = connectDB();
+    $collection = $db->posts;
+    $articles = $collection->find();
+    $total = $articles->count();
+    $pages = getPages($page, $total, $app->config('article.limit'));
+
+    $articles->skip($pages['start']);
+    
     $articles->sort(array('timestamp' => -1));
     $articles->limit($app->config('article.limit'));
 
-    $app->render('main.html', array('articles' => $articles));
+    $app->render('main.html', array('articles' => $articles, 'pages' => $pages));
 })->name('/');
 
 //admin section
@@ -250,7 +301,7 @@ $app->post('/getdbmeta', function () use ($app) {
 
     $num = syncAllBlogPosts($dropbox);
 
-    $app->redirect($app->config('base.url') . '/admin?s=synced&n=' . $num);
+    //$app->redirect($app->config('base.url') . '/admin?s=synced&n=' . $num);
 });
 
 //blog post by url slug
@@ -266,4 +317,16 @@ $app->get('/:page', function ($page) use ($app) {
         $app->notFound();
     }
     return $app->render('blog_view.html', array('article' => $post));
+});
+
+$app->get('/tag/:page', function ($page) use ($app) {
+    $db = connectDB();
+
+    $collection = $db->posts;
+    $post = $collection->find(array("tags" => array('$in' => array("{$page}"))));
+
+    if (!$post) {
+        $app->notFound();
+    }
+    return $app->render('main.html', array('articles' => $post));
 });

@@ -15,7 +15,7 @@ Twig_Autoloader::register();
 
 $app->view(new \Slim\Extras\Views\Twig());
 
-require 'app/config.php';
+require 'app/config_dev.php';
 $app->config($config);
 
 $app->hook('slim.before', function () use ($app) {

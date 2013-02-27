@@ -10,8 +10,28 @@
 
             <p>{{ article.content|raw }}</p>
         </article>
+    
         <hr />
+        
     {% else %}
         <p>There are currently no articles.</p>
     {% endfor %}
+    
+    <div class="row">
+    {% if pages.previous  %}
+        <div class="three columns">
+        <a href='{{ baseUrl }}/page/{{ pages.previous }}'>  previous page</a>
+        </div>
+    {% else %}
+            <div class="three columns"></div>
+     {% endif %}
+     <div class="three columns"></div>
+     {% if pages.next  %}
+        <div class="three columns">
+        <a href='{{ baseUrl }}/page/{{ pages.next }}'>  next page</a>
+        </div>
+    {% else %}
+            <div class="three columns"></div>
+     {% endif %}
+     </div>
 {% endblock %}

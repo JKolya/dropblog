@@ -2,11 +2,15 @@
 {% block page_title %}{{ article.title }}{% endblock %}
 {% block content %}
 <article>
-        <h3><a href='/Dropblog/{{ article.slug }}'>{{ article.title }}</a></h3>
+        <h3><a href='{{ baseUrl }}/{{ article.slug }}'>{{ article.title }}</a></h3>
         <h6>Written by <a href="#">{{ article.author }}</a> on {{ article.timestamp|date('jS F Y') }}.</h6>
 
         <p>{{ article.content|raw }}</p>
      </article>
+<hr />
+     {% for tag in article.tags %}
+     <a href="{{ baseUrl }}/tag/{{ tag }}" > {{ tag }} </a> 
+     {% endfor %}
 <hr />
 {% if disqusUser != '' %}
     <div id="disqus_thread"></div>
