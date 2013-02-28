@@ -11,19 +11,26 @@ Twig_Autoloader::register();
     'autoescape' => true
 );
 
-\Slim\Extras\Views\Twig::$twigDirectory = 'Twig';
+session_cache_limiter(false);
+session_start();
 
+\Slim\Extras\Views\Twig::$twigDirectory = 'Twig';
 $app->view(new \Slim\Extras\Views\Twig());
 
-require 'app/config_dev.php';
+require 'app/config.php';
 $app->config($config);
 
 $app->hook('slim.before', function () use ($app) {
-            $app->view()->appendData(array('baseUrl' => $app->config('base.url'),
-                'siteTitle' => $app->config('site.title'),
-                'disqusUser' => $app->config('disqus.username') ));
+    $user = null;
+    if (isset($_SESSION['user'])) {
+       $user = $_SESSION['user'];
+    }
+    $app->view()->setData('user', $user);
+    $app->view()->appendData(array('baseUrl' => $app->config('base.url'),
+        'siteTitle' => $app->config('site.title'),
+        'disqusUser' => $app->config('disqus.username') ));
         });
-        
+
 
 require 'app/routes/main.php';
 

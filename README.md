@@ -5,7 +5,7 @@ Dropblog is a simple blog engine for AppFog created with Slim Framework using Ma
 
 ## Dependencies
 
-* [Dropbox](https://github.com/BenTheDesigner/Dropbox)
+* [tijsverkoyen/dropbox](https://github.com/tijsverkoyen/Dropbox)
 * [Slim Framework](http://github.com/codeguy/Slim)
 * [Slim Extras](http://github.com/codeguy/Slim-Extras)
 * [Markdown](http://github.com/dflydev/dflydev-markdown)
@@ -17,13 +17,13 @@ As of right now you probably shouldn't...
 
 ##Posting
 
-Posts should can have an `md` or `txt` file extension. 
+Posts should can have an `md` or `txt` file extension.
 
 Files should start with the post info two spaces and then the content
 
     Date: YYYY-MM-DD
     Title: Post Title
-    Author: 
+    Author:
     Tags: comma separated
-    
+
     #post content
