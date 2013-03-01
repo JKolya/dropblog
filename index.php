@@ -31,7 +31,7 @@ $app->hook('slim.before', function () use ($app) {
         'disqusUser' => $app->config('disqus.username') ));
         });
 
-
+require 'app/Blog.php';
 require 'app/routes/main.php';
 
 $app->run();

@@ -13,7 +13,17 @@ Dropblog is a simple blog engine for AppFog created with Slim Framework using Ma
 
 ## Installation
 
-As of right now you probably shouldn't...
+Clone repo
+
+    git clone https://github.com/JKolya/dropblog.git
+
+Install dependencies with composer
+
+    composer install
+
+Change settings in `app\config.php`
+
+Upload to AppFog
 
 ##Posting
 
