@@ -3,16 +3,26 @@
 class Blog
 {
 
+    /*
+     * Dropbox object
+     *
+     * @var object
+     */
     public $dropbox;
 
+    /*
+     * Database collection object
+     *
+     * @var object
+     */
     public $collection;
+
     /*
      * gets meta data from the top of the file
      *
      * @param array
      * @return array
      */
-
     function getMetaData($data)
     {
         $data_array = explode("\n", $data);
@@ -43,7 +53,6 @@ class Blog
      * @param string $item
      * @return string
      */
-
     public static function aTrim(&$item)
     {
         $item = trim((string) $item);
@@ -55,7 +64,6 @@ class Blog
      * @param string
      * @return string
      */
-
     public function createSlug($string)
     {
         $slug = strtolower((string) $string);
@@ -75,10 +83,9 @@ class Blog
      * grab the contents of the markdown file
      *
      * @param array $contents
-     * 
+     *
      * @return array
      */
-
     public function getFileContents($contents)
     {
         $file = $this->fileGet($contents['path']);
@@ -91,12 +98,11 @@ class Blog
     }
 
     /*
-     * save the post to the db
+     * Save the post to the db
      *
      * @param array $contents
      *
      */
-
     function updatePost($contents)
     {
         $markdownParser = new dflydev\markdown\MarkdownParser();
@@ -125,41 +131,6 @@ class Blog
     }
 
     /*
-     * find tag in an array
-     *
-     * @param array $json
-     * @param array $tag
-     *
-     * @return mixed
-     */
-
-    function searchJSON($json, $tag)
-    {
-        $json =  objectToArray($json);
-        foreach ($json as $arr) {
-            if (in_array($tag, $arr)) {
-                return $arr;
-            }
-        }
-        return false;
-    }
-
-    /*
-     * convert an object to an array
-     */
-
-    function objectToArray($object)
-    {
-        if (!is_object($object) && !is_array($object)) {
-            return $object;
-        }
-        if (is_object($object)) {
-            $object = get_object_vars($object);
-        }
-        return array_map('objectToArray', $object);
-    }
-
-    /*
      * Sync blog posts with Dropbox
      * Get all .md, .txt and .markdown files from Dropbox and save or update the local storage
      * Check local storage for removed files from Dropbox
@@ -169,7 +140,6 @@ class Blog
      *
      * @return int $number_of_posts Counts how many posts have been synced
      */
-
     function syncAllBlogPosts($dropbox, $meta_data)
     {
 
@@ -198,6 +168,11 @@ class Blog
         return $number_of_posts;
     }
 
+    /*
+     * Delete records from db of files removed from Dropbox
+     *
+     * @parm array $contents
+     */
     function deletedRemovedFiles($contents)
     {
         $criteria = array('path' => $contents['path']);
@@ -213,7 +188,6 @@ class Blog
     *
     * @return array
     */
-
    function getPages($page, $total, $per_page)
    {
 
