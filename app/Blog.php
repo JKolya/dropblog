@@ -41,7 +41,7 @@ class Blog
                 $post_meta_data['author'] = trim($meta[1]);
             } elseif (strtolower($meta[0]) == 'tags') {
                 $post_meta_data['tags']  = explode(",", $meta[1]);
-                //array_walk($post_meta_data['tags'], 'Blog::aTrim');
+                array_walk($post_meta_data['tags'], 'Blog::aTrim');
             }
         }
         return $post_meta_data;
@@ -80,7 +80,8 @@ class Blog
     }
 
     /*
-     * grab the contents of the markdown file
+     * Grabs the contents of the markdown file from Dropbox
+     * puts into array the meta data and post content
      *
      * @param array $contents
      *
@@ -94,6 +95,7 @@ class Blog
         $raw_meta = array_shift($content);
         $data['meta'] = $this->getMetaData($raw_meta);
         $data['content'] = implode("\n\n", $content);
+        $data['content'] = trim($data['content']);
         return $data;
     }
 
